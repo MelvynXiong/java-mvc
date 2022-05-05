@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -63,8 +64,8 @@ public class DispatchServlet extends HttpServlet {
                     "Unsupported parameter type: " + parameterClass + " for method: " + method);
               }
             }
-            String[] parameterNames =
-                Arrays.stream(method.getParameters()).map(p -> p.getName()).toArray(String[]::new);
+            String[] parameterNames = Arrays.stream(method.getParameters()).map(p -> p.getName())
+                .toArray(String[]::new);
             String path = method.getAnnotation(GetMapping.class).value();
             logger.info("Found GET: {} => {}", path, method);
             this.getMappings.put(path, new GetDispatcher(controllerInstance, method, parameterNames,
@@ -143,21 +144,19 @@ public class DispatchServlet extends HttpServlet {
     pw.flush();
   }
 
-  private static final Set<Class<?>> supportedGetParameterTypes =
-      Set.of(int.class, long.class, boolean.class, String.class, HttpServletRequest.class,
-          HttpServletResponse.class, HttpSession.class);
+  private static final Set<Class<?>> supportedGetParameterTypes = Set.of(int.class, long.class, boolean.class,
+      String.class, HttpServletRequest.class,
+      HttpServletResponse.class, HttpSession.class);
 
-  private static final Set<Class<?>> supportedPostParameterTypes =
-      Set.of(HttpServletRequest.class, HttpServletResponse.class, HttpSession.class);
+  private static final Set<Class<?>> supportedPostParameterTypes = Set.of(HttpServletRequest.class,
+      HttpServletResponse.class, HttpSession.class);
 }
-
 
 abstract class AbstractDispatcher {
 
   public abstract ModelAndView invoke(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ReflectiveOperationException;
 }
-
 
 class GetDispatcher extends AbstractDispatcher {
 
@@ -208,7 +207,6 @@ class GetDispatcher extends AbstractDispatcher {
     return s == null ? defaultValue : s;
   }
 }
-
 
 class PostDispatcher extends AbstractDispatcher {
 

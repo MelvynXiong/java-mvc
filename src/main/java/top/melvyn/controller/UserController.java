@@ -17,7 +17,7 @@ import top.melvyn.framework.PostMapping;
 
 public class UserController {
 
-	private Map<String, User> userDatabase = new HashMap<>() {
+	private Map<String, User> userDatabase = new HashMap<String, User>() {
 		{
 			List<User> users = List.of( //
 					new User("bob@example.com", "bob123", "Bob", "This is bob."),
