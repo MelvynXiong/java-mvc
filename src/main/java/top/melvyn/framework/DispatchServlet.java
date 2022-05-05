@@ -43,6 +43,7 @@ public class DispatchServlet extends HttpServlet {
   @Override
   public void init() throws ServletException {
     logger.info("init {}...", getClass().getSimpleName());
+    System.out.println(">>> " + getClass().getSimpleName());
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     // 依次处理每个Controller:
@@ -64,8 +65,8 @@ public class DispatchServlet extends HttpServlet {
                     "Unsupported parameter type: " + parameterClass + " for method: " + method);
               }
             }
-            String[] parameterNames = Arrays.stream(method.getParameters()).map(p -> p.getName())
-                .toArray(String[]::new);
+            String[] parameterNames =
+                Arrays.stream(method.getParameters()).map(p -> p.getName()).toArray(String[]::new);
             String path = method.getAnnotation(GetMapping.class).value();
             logger.info("Found GET: {} => {}", path, method);
             this.getMappings.put(path, new GetDispatcher(controllerInstance, method, parameterNames,
@@ -144,19 +145,21 @@ public class DispatchServlet extends HttpServlet {
     pw.flush();
   }
 
-  private static final Set<Class<?>> supportedGetParameterTypes = Set.of(int.class, long.class, boolean.class,
-      String.class, HttpServletRequest.class,
-      HttpServletResponse.class, HttpSession.class);
+  private static final Set<Class<?>> supportedGetParameterTypes =
+      Set.of(int.class, long.class, boolean.class, String.class, HttpServletRequest.class,
+          HttpServletResponse.class, HttpSession.class);
 
-  private static final Set<Class<?>> supportedPostParameterTypes = Set.of(HttpServletRequest.class,
-      HttpServletResponse.class, HttpSession.class);
+  private static final Set<Class<?>> supportedPostParameterTypes =
+      Set.of(HttpServletRequest.class, HttpServletResponse.class, HttpSession.class);
 }
+
 
 abstract class AbstractDispatcher {
 
   public abstract ModelAndView invoke(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ReflectiveOperationException;
 }
+
 
 class GetDispatcher extends AbstractDispatcher {
 
@@ -207,6 +210,7 @@ class GetDispatcher extends AbstractDispatcher {
     return s == null ? defaultValue : s;
   }
 }
+
 
 class PostDispatcher extends AbstractDispatcher {
 
